@@ -68,8 +68,8 @@ const Home: React.FC = () => {
           <EditItemForm
             item={modalState.item}
             onUpdate={(title, body) => {
-              if (modalState) {
-                updateItem(modalState.item.id, { title, body });
+              if (modalState?.item?.id) {
+                updateItem(modalState?.item?.id, { title, body });
                 toggleModal();
               }
             }}
