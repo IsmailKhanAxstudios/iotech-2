@@ -2,7 +2,7 @@ How to Run the Project Locally
 
 ### Live URL
 
-https://iotech.netlify.app/
+https://iotech-2-7c5l.vercel.app/
 
 1. Clone the Repository
 
