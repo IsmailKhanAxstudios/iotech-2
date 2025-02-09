@@ -16,11 +16,12 @@ const Home: React.FC = () => {
   const { items, loading, error, addItem, updateItem, deleteItem } = useItems();
   const [modalState, setModalState] = useState<{
     type: string;
-    item: Item | null;
+    item: Item | { id: number } | null;
   }>({ type: "", item: null });
   const [filter, setFilter] = useState("");
 
-  const toggleModal = (type = "", item = null) => setModalState({ type, item });
+  const toggleModal = (type = "", item: Item | { id: number } | null = null) =>
+    setModalState({ type, item });
 
   const handleAddItem = (title: string, body: string) => {
     addItem(title, body);
@@ -29,7 +30,7 @@ const Home: React.FC = () => {
 
   const confirmDelete = () => {
     if (modalState?.item?.id) {
-      deleteItem(Number(modalState.item.id));
+      deleteItem(Number(modalState.item.id)); // Ensuring id is a number for deletion
     }
     toggleModal();
   };
