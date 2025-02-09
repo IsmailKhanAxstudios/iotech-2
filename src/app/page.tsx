@@ -67,17 +67,19 @@ const Home: React.FC = () => {
       </Modal>
 
       <Modal isOpen={modalState.type === "edit"} onClose={() => toggleModal()}>
-        {modalState.item && (
-          <EditItemForm
-            item={modalState.item}
-            onUpdate={(title, body) => {
-              if (modalState?.item?.id) {
-                updateItem(Number(modalState.item.id), { title, body });
-                toggleModal();
-              }
-            }}
-          />
-        )}
+        {modalState.item &&
+          "title" in modalState.item &&
+          "body" in modalState.item && (
+            <EditItemForm
+              item={modalState.item}
+              onUpdate={(title, body) => {
+                if (modalState?.item?.id) {
+                  updateItem(Number(modalState.item.id), { title, body });
+                  toggleModal();
+                }
+              }}
+            />
+          )}
       </Modal>
 
       <Modal
