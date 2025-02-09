@@ -28,7 +28,9 @@ const Home: React.FC = () => {
   };
 
   const confirmDelete = () => {
-    if (modalState?.item?.id) deleteItem(Number(modalState.item.id));
+    if (modalState?.item?.id) {
+      deleteItem(Number(modalState.item.id));
+    }
     toggleModal();
   };
 
@@ -69,7 +71,7 @@ const Home: React.FC = () => {
             item={modalState.item}
             onUpdate={(title, body) => {
               if (modalState?.item?.id) {
-                updateItem(modalState?.item?.id, { title, body });
+                updateItem(Number(modalState.item.id), { title, body });
                 toggleModal();
               }
             }}
