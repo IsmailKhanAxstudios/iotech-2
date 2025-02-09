@@ -1,101 +1,107 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useMemo } from "react";
+import useItems from "./hooks/useItems";
+import Modal from "@/components/Modal";
+import AddItemForm from "@/components/AddItemForm";
+import ItemList from "@/components/ItemList";
+import EditItemForm from "@/components/EditItemForm";
 
-export default function Home() {
+const Home: React.FC = () => {
+  const { items, loading, error, addItem, updateItem, deleteItem } = useItems();
+  const [modalState, setModalState] = useState({ type: "", item: null });
+
+  const [filter, setFilter] = useState("");
+
+  const toggleModal = (type = "", item = null) => setModalState({ type, item });
+
+  const handleAddItem = (title: string, body: string) => {
+    addItem(title, body);
+    toggleModal();
+  };
+
+  const confirmDelete = () => {
+    if (modalState.item) deleteItem(modalState.item.id);
+    toggleModal();
+  };
+
+  const filteredItems = useMemo(
+    () =>
+      items.filter((item) =>
+        item.title.toLowerCase().includes(filter.toLowerCase())
+      ),
+    [items, filter]
+  );
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="p-4 bg-yellow-50">
+      <div className="flex justify-between mb-4">
+        <button
+          onClick={() => toggleModal("add")}
+          className="bg-blue-900 text-white px-4 py-2 rounded"
+        >
+          Add Item
+        </button>
+        <div>
+          <input
+            type="text"
+            className="border p-2 mr-2"
+            placeholder="Search"
+            onChange={(e) => setFilter(e.target.value)}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      </div>
+
+      <Modal isOpen={modalState.type === "add"} onClose={() => toggleModal()}>
+        <AddItemForm onAdd={handleAddItem} />
+      </Modal>
+
+      <Modal isOpen={modalState.type === "edit"} onClose={() => toggleModal()}>
+        {modalState.item && (
+          <EditItemForm
+            item={modalState.item}
+            onUpdate={(title, body) => {
+              updateItem(modalState.item.id, { title, body });
+              toggleModal();
+            }}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        )}
+      </Modal>
+
+      <Modal
+        isOpen={modalState.type === "delete"}
+        onClose={() => toggleModal()}
+      >
+        <div className="p-4 text-center">
+          <h3 className="text-xl font-semibold">
+            Are you sure you want to delete this item?
+          </h3>
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={confirmDelete}
+              className="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Yes, Delete
+            </button>
+            <button
+              onClick={() => toggleModal()}
+              className="bg-gray-500 text-white px-4 py-2 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <ItemList
+        items={filteredItems}
+        onDelete={(id) => toggleModal("delete", { id })}
+        onEdit={(item) => toggleModal("edit", item)}
+      />
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
-}
+};
+
+export default Home;
