@@ -6,10 +6,18 @@ import AddItemForm from "@/components/AddItemForm";
 import ItemList from "@/components/ItemList";
 import EditItemForm from "@/components/EditItemForm";
 
+interface Item {
+  id: string; // or number, depending on your ID type
+  title: string;
+  body: string;
+}
+
 const Home: React.FC = () => {
   const { items, loading, error, addItem, updateItem, deleteItem } = useItems();
-  const [modalState, setModalState] = useState({ type: "", item: null });
-
+  const [modalState, setModalState] = useState<{
+    type: string;
+    item: Item | null;
+  }>({ type: "", item: null });
   const [filter, setFilter] = useState("");
 
   const toggleModal = (type = "", item = null) => setModalState({ type, item });
@@ -20,7 +28,7 @@ const Home: React.FC = () => {
   };
 
   const confirmDelete = () => {
-    if (modalState.item) deleteItem(modalState?.item?.id);
+    if (modalState.item) deleteItem(modalState.item.id); // TypeScript will now know `item` has an `id`
     toggleModal();
   };
 
@@ -60,7 +68,7 @@ const Home: React.FC = () => {
           <EditItemForm
             item={modalState.item}
             onUpdate={(title, body) => {
-              updateItem(modalState?.item?.id, { title, body });
+              updateItem(modalState.item.id, { title, body });
               toggleModal();
             }}
           />

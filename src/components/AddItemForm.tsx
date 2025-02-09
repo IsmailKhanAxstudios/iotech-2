@@ -34,7 +34,7 @@ const AddItemForm: React.FC<Props> = ({ onAdd }) => {
       />
       <button
         type="submit"
-        className="bg-green-500 text-white px-4 py-2 rounded"
+        className="bg-green-900 text-white px-4 py-2 rounded"
       >
         Add Item
       </button>
