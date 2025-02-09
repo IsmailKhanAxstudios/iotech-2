@@ -20,7 +20,7 @@ const Home: React.FC = () => {
   };
 
   const confirmDelete = () => {
-    if (modalState.item) deleteItem(modalState.item.id);
+    if (modalState.item) deleteItem(modalState?.item?.id);
     toggleModal();
   };
 
@@ -60,7 +60,7 @@ const Home: React.FC = () => {
           <EditItemForm
             item={modalState.item}
             onUpdate={(title, body) => {
-              updateItem(modalState.item.id, { title, body });
+              updateItem(modalState?.item?.id, { title, body });
               toggleModal();
             }}
           />
