@@ -7,7 +7,7 @@ import ItemList from "@/components/ItemList";
 import EditItemForm from "@/components/EditItemForm";
 
 interface Item {
-  id: string; // or number, depending on your ID type
+  id: string;
   title: string;
   body: string;
 }
@@ -28,7 +28,7 @@ const Home: React.FC = () => {
   };
 
   const confirmDelete = () => {
-    if (modalState.item) deleteItem(modalState.item.id); // TypeScript will now know `item` has an `id`
+    if (modalState.item) deleteItem(Number(modalState.item.id));
     toggleModal();
   };
 
@@ -68,8 +68,10 @@ const Home: React.FC = () => {
           <EditItemForm
             item={modalState.item}
             onUpdate={(title, body) => {
-              updateItem(modalState.item.id, { title, body });
-              toggleModal();
+              if (modalState) {
+                updateItem(modalState.item.id, { title, body });
+                toggleModal();
+              }
             }}
           />
         )}
